@@ -1,0 +1,25 @@
+@media (min-width: 0px) and (max-width: 576px) {
+    .col-homecategories:nth-child(2n) {
+        padding-right: 0;
+    }
+}
+
+@media (min-width: 576px) and (max-width: 767px) {
+    .col-homecategories:nth-child(3n) {
+        padding-right: 0;
+    }
+}
+
+@media (min-width: 768px) {
+    .col-homecategories:nth-child(6n) {
+        padding-right: 0;
+    }
+}
+
+.homepagecategories .mb-2 {
+    margin-bottom: 1em;
+}
+
+.homepagecategories .float-right {
+    float: right;
+}

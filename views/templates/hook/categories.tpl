@@ -40,29 +40,13 @@
             {/foreach}
         </div>
     </div>
+    {if $show_more_button.display}
+        <div class="row">
+            <div class="col-md-12 mb-2">
+                <a href="{$show_more_button.link}" class="btn btn-primary float-right">
+                    {l s='See all categories' mod='Shop.Catalog.Default'}
+                </a>
+            </div>
+        </div>
+    {/if}
 </div>
-
-
-
-
-<style>
-
-    @media (min-width: 0px) and (max-width: 576px) {
-        .col-homecategories:nth-child(2n) {
-            padding-right: 0;
-        }
-    }
-
-    @media (min-width: 576px) and (max-width: 767px) {
-        .col-homecategories:nth-child(3n) {
-            padding-right: 0;
-        }
-    }
-
-    @media (min-width: 768px) {
-        .col-homecategories:nth-child(6n) {
-            padding-right: 0;
-        }
-    }
-
-</style>
