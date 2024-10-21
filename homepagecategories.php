@@ -100,8 +100,78 @@ class HomepageCategories extends Module
         return $tab->delete();
     }
 
+    public function getContent()
+    {
+        $output = '';
+
+        // Handle form submission
+        if (Tools::isSubmit('submit_'.$this->name)) {
+            $show_button = Tools::getValue('HOMEPAGECATEGORIES_DISPLAY_SHOW_MORE_BUTTON');
+            Configuration::updateValue('HOMEPAGECATEGORIES_DISPLAY_SHOW_MORE_BUTTON', $show_button);
+            $output .= $this->displayConfirmation($this->trans('Settings updated', array(), 'Admin.Global'));
+        }
+
+        // Render the configuration form
+        return $output . $this->renderForm();
+    }
+
+    public function renderForm()
+    {
+        $fields_form = array(
+            'form' => array(
+                'legend' => array(
+                    'title' => $this->trans('Settings', array(), 'Admin.Global'),
+                ),
+                'input' => array(
+                    array(
+                        'type' => 'switch',
+                        'label' => $this->trans('Enable "Show more" button', array(), 'Admin.Global'),
+                        'name' => 'HOMEPAGECATEGORIES_DISPLAY_SHOW_MORE_BUTTON',
+                        'is_bool' => true,
+                        'values' => array(
+                            array(
+                                'id' => 'active_on',
+                                'value' => 1,
+                                'label' => $this->trans('Enabled', array(), 'Admin.Global'),
+                            ),
+                            array(
+                                'id' => 'active_off',
+                                'value' => 0,
+                                'label' => $this->trans('Disabled', array(), 'Admin.Global'),
+                            ),
+                        ),
+                    ),
+                ),
+                'submit' => array(
+                    'title' => $this->trans('Save', array(), 'Admin.Actions'),
+                ),
+            ),
+        );
+
+        $helper = new HelperForm();
+        $helper->show_toolbar = false;
+        $helper->table = $this->table;
+        $helper->module = $this;
+        $helper->default_form_language = (int) Configuration::get('PS_LANG_DEFAULT');
+        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
+        $helper->identifier = $this->identifier;
+        $helper->submit_action = 'submit_' . $this->name;
+        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false) . '&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name;
+        $helper->token = Tools::getAdminTokenLite('AdminModules');
+        $helper->tpl_vars = array(
+            'fields_value' => array(
+                'HOMEPAGECATEGORIES_DISPLAY_SHOW_MORE_BUTTON' => Tools::getValue('HOMEPAGECATEGORIES_DISPLAY_SHOW_MORE_BUTTON', Configuration::get('HOMEPAGECATEGORIES_DISPLAY_SHOW_MORE_BUTTON')),
+            ),
+        );
+
+        return $helper->generateForm(array($fields_form));
+    }
+
+
     public function hookDisplayHome()
     {
+        $this->context->controller->addCSS($this->_path.'views/css/front.css');
+
         $fetchedCategories = HomepageCategoriesClass::getAllCategories();
         $categories = [];
 
@@ -118,18 +188,19 @@ class HomepageCategories extends Module
             ];
         }
 
-        var_dump($categories);
-
-
-        if ($categories) {
-            $this->context->smarty->assign([
-                'categories' => $categories
-            ]);
-
-            return $this->context->smarty->fetch('module:homepagecategories/views/templates/hook/categories.tpl');
+        if (is_array($categories) && $categories <= 0) {
+            return;
         }
 
-        return '';
+        $this->context->smarty->assign([
+            'categories' => $categories,
+            'show_more_button' => [
+                'display' => (bool) Configuration::get('HOMEPAGECATEGORIES_DISPLAY_SHOW_MORE_BUTTON'),
+                'link' => $this->context->link->getCategoryLink($this->context->shop->id_category),
+            ]
+        ]);
+
+        return $this->context->smarty->fetch('module:homepagecategories/views/templates/hook/categories.tpl');
     }
 
 }
