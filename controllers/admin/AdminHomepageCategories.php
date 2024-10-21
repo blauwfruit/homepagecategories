@@ -119,7 +119,16 @@ class AdminHomepageCategoriesController extends ModuleAdminController
     public function ajaxProcessSearchObjects()
     {
         $term = Tools::getValue('term');
-        $results = HomepageCategoriesClass::searchCategories($term);
-        die(jsonEncode($results));
+        if (!$term) {
+            die(json_encode(['error' => 'No search term provided']));
+        }
+
+        try {
+            $results = HomepageCategoriesClass::searchCategories($term);
+            die(json_encode($results));
+        } catch (Exception $e) {
+            die(json_encode(['error' => $e->getMessage()]));
+        }
     }
+
 }

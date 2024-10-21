@@ -52,13 +52,14 @@ class HomepageCategoriesClass extends ObjectModel
         $sql = new DbQuery();
         $sql->select('cl.id_category, cl.name');
         $sql->from('category_lang', 'cl');
-        $sql->leftJoin('homepagecategories', 'hbi', 'cl.id_category = hbi.id_category');
         $sql->leftJoin('category_shop', 'cs', 'cs.id_category = cl.id_category');
         $sql->where('cl.name LIKE \'%' . pSQL($term) . '%\'');
-        $sql->where('hbi.id_category IS NULL');
         $sql->where('cs.id_shop = ' . (int)Context::getContext()->shop->id);
+        $sql->where('cl.id_lang = ' . (int)Context::getContext()->language->id);
+
         return Db::getInstance()->executeS($sql);
     }
+
 
 
     public static function getAllCategories()
@@ -69,11 +70,7 @@ class HomepageCategoriesClass extends ObjectModel
         $sql->leftJoin('category_shop', 'cs', 'cs.id_category = hpc.id_category');
         $sql->where('cs.id_shop = ' . (int)Context::getContext()->shop->id);
 
-        $result = Db::getInstance()->executeS($sql);
-
-        var_dump($result);
-
-        return $result;
+        return Db::getInstance()->executeS($sql);
     }
 
 }
