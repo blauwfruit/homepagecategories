@@ -19,9 +19,16 @@ Add specific shop categories & see more button to the homepage.
 3. When you want to pull in the latest version run `git submodule update --init --recursive`
 
 ## Usage
+### Shop Specific Homepage Categories:
 1. Navigate to the Homepage Categories module configuration page `Design` > `Homepage Categories`
 2. Click on add new
 3. Search for a category name.
+4. Hit the save button.
+
+### See More Button:
+1. Head to `Modules` > `Modules Manager`
+2. Find the module and click configure.
+3. Toggle the button to `Enabled`.
 4. Hit the save button.
 
 ## Docker
