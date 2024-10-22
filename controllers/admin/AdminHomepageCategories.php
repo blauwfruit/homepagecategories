@@ -62,6 +62,16 @@ class AdminHomepageCategoriesController extends ModuleAdminController
         $this->actions = ['edit', 'delete'];
     }
 
+    public function getList($id_lang, $order_by = null, $order_way = null, $start = 0, $limit = null, $id_lang_shop = null)
+    {
+        $this->_select = 'hpc.id_shop';
+        $this->_join = 'LEFT JOIN `'._DB_PREFIX_.'homepagecategories` hpc ON (hpc.id_category = a.id_category)';
+        $this->_where = 'AND hpc.id_shop = ' . (int) $this->context->shop->id;
+        $this->_group = 'GROUP BY hpc.id_category';
+
+        parent::getList($id_lang, $order_by, $order_way, $start, $limit, $id_lang_shop);
+    }
+
     public function setMedia($isNewTheme = false)
     {
         parent::setMedia($isNewTheme);
@@ -107,6 +117,16 @@ class AdminHomepageCategoriesController extends ModuleAdminController
 
     public function postProcess()
     {
+        if (Tools::isSubmit('submitHomepageCategory')) {
+            $categoryId = Tools::getValue('id_category');
+            if ($categoryId) {
+                HomepageCategoriesClass::saveCategory($categoryId);
+                $this->confirmations[] = $this->l('Category has been saved successfully.');
+            } else {
+                $this->errors[] = $this->l('Invalid category ID.');
+            }
+        }
+
         parent::postProcess();
     }
 
@@ -119,7 +139,16 @@ class AdminHomepageCategoriesController extends ModuleAdminController
     public function ajaxProcessSearchObjects()
     {
         $term = Tools::getValue('term');
-        $results = HomepageCategoriesClass::searchCategories($term);
-        die(jsonEncode($results));
+        if (!$term) {
+            die(json_encode(['error' => 'No search term provided']));
+        }
+
+        try {
+            $results = HomepageCategoriesClass::searchCategories($term);
+            die(json_encode($results));
+        } catch (Exception $e) {
+            die(json_encode(['error' => $e->getMessage()]));
+        }
     }
+
 }

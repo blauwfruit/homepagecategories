@@ -2,7 +2,7 @@
 
 ## Overview
 
-Add specific shop categories & customized blocks to homepage.
+Add specific shop categories & see more button to the homepage.
 
 ## Installation
 

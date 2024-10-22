@@ -28,6 +28,7 @@ class HomepageCategoriesClass extends ObjectModel
 {
     public $id;
     public $id_category;
+    public $id_shop;
     public $date_add;
 
     public static $definition = array(
@@ -35,6 +36,11 @@ class HomepageCategoriesClass extends ObjectModel
         'primary' => 'id_homepagecategories',
         'fields' => array(
             'id_category' => array(
+                'type' => self::TYPE_INT,
+                'validate' => 'isUnsignedInt',
+                'required' => true
+            ),
+            'id_shop' => array(
                 'type' => self::TYPE_INT,
                 'validate' => 'isUnsignedInt',
                 'required' => true
@@ -47,33 +53,45 @@ class HomepageCategoriesClass extends ObjectModel
         ),
     );
 
+    public function __construct($id = null, $id_lang = null, $id_shop = null)
+    {
+        parent::__construct($id, $id_lang, $id_shop);
+        $this->id_shop = Context::getContext()->shop->id;
+    }
+
     public static function searchCategories($term)
     {
         $sql = new DbQuery();
         $sql->select('cl.id_category, cl.name');
         $sql->from('category_lang', 'cl');
-        $sql->leftJoin('homepagecategories', 'hbi', 'cl.id_category = hbi.id_category');
         $sql->leftJoin('category_shop', 'cs', 'cs.id_category = cl.id_category');
         $sql->where('cl.name LIKE \'%' . pSQL($term) . '%\'');
-        $sql->where('hbi.id_category IS NULL');
         $sql->where('cs.id_shop = ' . (int)Context::getContext()->shop->id);
+        $sql->where('cl.id_lang = ' . (int)Context::getContext()->language->id);
+
         return Db::getInstance()->executeS($sql);
     }
-
 
     public static function getAllCategories()
     {
         $sql = new DbQuery();
-        $sql->select('*');
+        $sql->select('hpc.id_category, hpc.date_add');
         $sql->from('homepagecategories', 'hpc');
-        $sql->leftJoin('category_shop', 'cs', 'cs.id_category = hpc.id_category');
-        $sql->where('cs.id_shop = ' . (int)Context::getContext()->shop->id);
+        $sql->leftJoin('category', 'c', 'c.id_category = hpc.id_category');
+        $sql->where('hpc.id_shop = ' . (int)Context::getContext()->shop->id);
 
-        $result = Db::getInstance()->executeS($sql);
-
-        var_dump($result);
-
-        return $result;
+        return Db::getInstance()->executeS($sql);
     }
 
+    public static function saveCategory($categoryId)
+    {
+        $shopId = (int) Context::getContext()->shop->id;
+
+        $category = new HomepageCategoriesClass();
+        $category->id_category = (int) $categoryId;
+        $category->id_shop = $shopId;
+        $category->date_add = date('Y-m-d H:i:s');
+
+        return $category->add();
+    }
 }

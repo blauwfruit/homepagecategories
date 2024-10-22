@@ -25,9 +25,10 @@
 */
 
 $sql = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'homepagecategories` (
-            `id_homepagecategories` int(11) NOT NULL AUTO_INCREMENT,
-            `id_category` int(11) NOT NULL,
-            `date_add` datetime NOT NULL,
+            `id_homepagecategories` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `id_category` INT(10) UNSIGNED NOT NULL,
+            `id_shop` INT(10) UNSIGNED NOT NULL,
+            `date_add` DATETIME NOT NULL,
             PRIMARY KEY (`id_homepagecategories`)
         ) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
 

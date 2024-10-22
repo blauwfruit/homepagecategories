@@ -176,7 +176,7 @@ class HomepageCategories extends Module
         $categories = [];
 
         foreach ($fetchedCategories as $categoryData) {
-            $category = new Category($categoryData['id_category'], $this->context->language->id, $this->context->shop->id);
+            $category = new Category($categoryData['id_category'], $this->context->language->id);
 
             $categoryImageUrl = $this->context->link->getCatImageLink($category->link_rewrite, $category->id);
             $categoryLink = $this->context->link->getCategoryLink($category->id, $category->link_rewrite);
