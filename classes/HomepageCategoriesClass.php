@@ -28,6 +28,7 @@ class HomepageCategoriesClass extends ObjectModel
 {
     public $id;
     public $id_category;
+    public $id_shop;
     public $date_add;
 
     public static $definition = array(
@@ -39,6 +40,11 @@ class HomepageCategoriesClass extends ObjectModel
                 'validate' => 'isUnsignedInt',
                 'required' => true
             ),
+            'id_shop' => array(
+                'type' => self::TYPE_INT,
+                'validate' => 'isUnsignedInt',
+                'required' => true
+            ),
             'date_add' => array(
                 'type' => self::TYPE_DATE,
                 'validate' => 'isDate',
@@ -46,6 +52,12 @@ class HomepageCategoriesClass extends ObjectModel
             ),
         ),
     );
+
+    public function __construct($id = null, $id_lang = null, $id_shop = null)
+    {
+        parent::__construct($id, $id_lang, $id_shop);
+        $this->id_shop = Context::getContext()->shop->id;
+    }
 
     public static function searchCategories($term)
     {
@@ -60,17 +72,26 @@ class HomepageCategoriesClass extends ObjectModel
         return Db::getInstance()->executeS($sql);
     }
 
-
-
     public static function getAllCategories()
     {
         $sql = new DbQuery();
-        $sql->select('*');
+        $sql->select('hpc.id_category, hpc.date_add');
         $sql->from('homepagecategories', 'hpc');
-        $sql->leftJoin('category_shop', 'cs', 'cs.id_category = hpc.id_category');
-        $sql->where('cs.id_shop = ' . (int)Context::getContext()->shop->id);
+        $sql->leftJoin('category', 'c', 'c.id_category = hpc.id_category');
+        $sql->where('hpc.id_shop = ' . (int)Context::getContext()->shop->id);
 
         return Db::getInstance()->executeS($sql);
     }
 
+    public static function saveCategory($categoryId)
+    {
+        $shopId = (int) Context::getContext()->shop->id;
+
+        $category = new HomepageCategoriesClass();
+        $category->id_category = (int) $categoryId;
+        $category->id_shop = $shopId;
+        $category->date_add = date('Y-m-d H:i:s');
+
+        return $category->add();
+    }
 }
