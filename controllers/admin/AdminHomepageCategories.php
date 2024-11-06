@@ -64,9 +64,13 @@ class AdminHomepageCategoriesController extends ModuleAdminController
 
     public function getList($id_lang, $order_by = null, $order_way = null, $start = 0, $limit = null, $id_lang_shop = null)
     {
+        $shopId = (Shop::getContext() == Shop::CONTEXT_ALL)
+            ? 0
+            : Context::getContext()->shop->id;
+
         $this->_select = 'hpc.id_shop';
         $this->_join = 'LEFT JOIN `'._DB_PREFIX_.'homepagecategories` hpc ON (hpc.id_category = a.id_category)';
-        $this->_where = 'AND hpc.id_shop = ' . (int) $this->context->shop->id;
+        $this->_where = 'AND hpc.id_shop IN('.(int) $shopId.', 0)';
         $this->_group = 'GROUP BY hpc.id_category';
 
         parent::getList($id_lang, $order_by, $order_way, $start, $limit, $id_lang_shop);

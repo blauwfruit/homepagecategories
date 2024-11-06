@@ -56,7 +56,7 @@ class HomepageCategoriesClass extends ObjectModel
     public function __construct($id = null, $id_lang = null, $id_shop = null)
     {
         parent::__construct($id, $id_lang, $id_shop);
-        $this->id_shop = Context::getContext()->shop->id;
+        $this->id_shop = (Shop::getContext() == Shop::CONTEXT_ALL) ? 0 : Context::getContext()->shop->id;
     }
 
     public static function searchCategories($term)
@@ -66,7 +66,7 @@ class HomepageCategoriesClass extends ObjectModel
         $sql->from('category_lang', 'cl');
         $sql->leftJoin('category_shop', 'cs', 'cs.id_category = cl.id_category');
         $sql->where('cl.name LIKE \'%' . pSQL($term) . '%\'');
-        $sql->where('cs.id_shop = ' . (int)Context::getContext()->shop->id);
+        $sql->where('cs.id_shop IN(' . (int)Context::getContext()->shop->id . ', 0)');
         $sql->where('cl.id_lang = ' . (int)Context::getContext()->language->id);
 
         return Db::getInstance()->executeS($sql);
@@ -78,18 +78,18 @@ class HomepageCategoriesClass extends ObjectModel
         $sql->select('hpc.id_category, hpc.date_add');
         $sql->from('homepagecategories', 'hpc');
         $sql->leftJoin('category', 'c', 'c.id_category = hpc.id_category');
-        $sql->where('hpc.id_shop = ' . (int)Context::getContext()->shop->id);
+        $sql->where('hpc.id_shop IN(' . (int)Context::getContext()->shop->id . ', 0)');
 
         return Db::getInstance()->executeS($sql);
     }
 
     public static function saveCategory($categoryId)
     {
-        $shopId = (int) Context::getContext()->shop->id;
+        $shopId = (Shop::getContext() == Shop::CONTEXT_ALL) ? 0 : Context::getContext()->shop->id;
 
         $category = new HomepageCategoriesClass();
         $category->id_category = (int) $categoryId;
-        $category->id_shop = $shopId;
+        $category->id_shop = (int) $shopId;
         $category->date_add = date('Y-m-d H:i:s');
 
         return $category->add();

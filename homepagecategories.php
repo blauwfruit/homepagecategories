@@ -188,7 +188,7 @@ class HomepageCategories extends Module
             ];
         }
 
-        if (is_array($categories) && $categories <= 0) {
+        if (is_array($categories) && count($categories) <= 0) {
             return;
         }
 
