@@ -154,5 +154,4 @@ class AdminHomepageCategoriesController extends ModuleAdminController
             die(json_encode(['error' => $e->getMessage()]));
         }
     }
-
 }

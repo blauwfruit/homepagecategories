@@ -202,5 +202,4 @@ class HomepageCategories extends Module
 
         return $this->context->smarty->fetch('module:homepagecategories/views/templates/hook/categories.tpl');
     }
-
 }
