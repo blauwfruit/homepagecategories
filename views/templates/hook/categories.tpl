@@ -25,7 +25,7 @@
 
 <div class="homepagecategories col-md-12 pl-0 pr-0 mt-3">
     <div class="homepagecategories-wrapper">
-        <p class="d-none d-md-block h3">{l s='Ons assortiment'}</p>
+        <p class="d-none d-md-block h3">{l s='Ons assortiment' mod='homepagecategories'}</p>
         <div class="d-flex flex-wrap">
             {foreach from=$categories item=category}
 
@@ -44,7 +44,7 @@
         <div class="row">
             <div class="col-md-12 mb-2">
                 <a href="{$show_more_button.link}" class="btn btn-primary float-right">
-                    {l s='See all categories' mod='Shop.Catalog.Default'}
+                    {l s='See all categories' mod='homepagecategories'}
                 </a>
             </div>
         </div>
