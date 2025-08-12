@@ -23,7 +23,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
 
-<div class="homepagecategories col-md-12 pl-0 pr-0 mt-3">
+<div class="homepagecategories col-md-12 pl-0 pr-0 mt-1">
     <div class="homepagecategories-wrapper">
         <p class="d-none d-md-block h3">{l s='Ons assortiment' mod='homepagecategories'}</p>
         <div class="d-flex flex-wrap">
