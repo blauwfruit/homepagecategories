@@ -29,7 +29,8 @@ $sql = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'homepagecategories` (
             `id_category` INT(10) UNSIGNED NOT NULL,
             `id_shop` INT(10) UNSIGNED NOT NULL,
             `date_add` DATETIME NOT NULL,
-            PRIMARY KEY (`id_homepagecategories`)
+            PRIMARY KEY (`id_homepagecategories`),
+            UNIQUE KEY `unique_category_shop` (`id_category`, `id_shop`)
         ) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
 
 return Db::getInstance()->execute($sql);

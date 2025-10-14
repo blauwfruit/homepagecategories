@@ -36,7 +36,7 @@ class HomepageCategories extends Module
 
         $this->name = 'homepagecategories';
         $this->tab = 'content_management';
-        $this->version = '1.0.0';
+        $this->version = '1.0.1';
         $this->author = 'blauwfruit';
         $this->need_instance = 0;
 

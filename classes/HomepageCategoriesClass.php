@@ -87,11 +87,27 @@ class HomepageCategoriesClass extends ObjectModel
     {
         $shopId = (Shop::getContext() == Shop::CONTEXT_ALL) ? 0 : Context::getContext()->shop->id;
 
+        // Simple pre-insert duplicate check
+        if (self::categoryExists($categoryId, $shopId)) {
+            return false;
+        }
+
         $category = new HomepageCategoriesClass();
         $category->id_category = (int) $categoryId;
         $category->id_shop = (int) $shopId;
         $category->date_add = date('Y-m-d H:i:s');
 
-        return $category->add();
+        return (bool) $category->add();
+    }
+
+    public static function categoryExists($categoryId, $shopId)
+    {
+        $sql = new DbQuery();
+        $sql->select('COUNT(*)');
+        $sql->from('homepagecategories');
+        $sql->where('id_category = ' . (int)$categoryId);
+        $sql->where('id_shop = ' . (int)$shopId);
+        
+        return (int)Db::getInstance()->getValue($sql) > 0;
     }
 }

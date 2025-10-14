@@ -124,14 +124,41 @@ class AdminHomepageCategoriesController extends ModuleAdminController
         if (Tools::isSubmit('submitHomepageCategory')) {
             $categoryId = Tools::getValue('id_category');
             if ($categoryId) {
-                HomepageCategoriesClass::saveCategory($categoryId);
-                $this->confirmations[] = $this->l('Category has been saved successfully.');
+                // Simple flow: if save fails, treat as duplicate
+                $result = HomepageCategoriesClass::saveCategory($categoryId);
+                if ($result) {
+                    $this->confirmations[] = $this->l('Category has been saved successfully.');
+                } else {
+                    $this->errors[] = $this->l('This category is already displayed on the homepage.');
+                }
             } else {
                 $this->errors[] = $this->l('Invalid category ID.');
             }
         }
 
         parent::postProcess();
+    }
+
+    /**
+     * Intercept default add action (submitAddhomepagecategories) from HelperForm
+     * to avoid double insertion and surface friendly errors on duplicates.
+     */
+    public function processAdd()
+    {
+        $categoryId = (int) Tools::getValue('id_category');
+
+        if (!$categoryId) {
+            $this->errors[] = $this->l('Invalid category ID.');
+            return false;
+        }
+
+        $result = HomepageCategoriesClass::saveCategory($categoryId);
+        if (!$result) {
+            $this->errors[] = $this->l('This category is already displayed on the homepage.');
+            return false;
+        }
+
+        return true;
     }
 
     public function getCategoryName($categoryId)
